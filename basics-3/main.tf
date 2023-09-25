@@ -13,11 +13,13 @@ provider "aws" {
 }
 
 variable "names" {
-  default = ["hillary", "ofweneke", "linda"]
+  default = ["justus", "hillary", "linda"]
 }
 
 resource "aws_iam_user" "my_iam_users" {
-  count         = length(var.names)
-  name          = var.names[count.index]
+  #count         = length(var.names)
+  #name          = var.names[count.index]
+  for_each      = toset(var.names)
+  name          = each.value
   force_destroy = true
 }
