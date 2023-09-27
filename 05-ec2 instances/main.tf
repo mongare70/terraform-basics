@@ -16,12 +16,18 @@ variable "aws_key_pair" {
   default = "~/aws/aws_keys/default-ec2.pem"
 }
 
+// Default VPC
+resource "aws_default_vpc" "default" {
+  tags = { Name : "Default VPC" }
+}
+
 // HTTP SERVER -> SG
 //SECURITY GROUP(SG) 80 TCP, 22 TCP, CIDR ["0.0.0.0/0"]
 
 resource "aws_security_group" "http_server_sg" {
-  name   = "http_server_sg"
-  vpc_id = "vpc-06358980fc63c14e3"
+  name = "http_server_sg"
+  // vpc_id = "vpc-06358980fc63c14e3"
+  vpc_id = aws_default_vpc.default.id
   ingress = [{
     from_port        = 80
     to_port          = 80
