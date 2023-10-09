@@ -21,6 +21,23 @@ resource "aws_default_vpc" "default" {
   tags = { Name : "Default VPC" }
 }
 
+resource "aws_default_subnet" "default" {
+  availability_zone = "us-east-1e"
+}
+
+data "aws_ami" "aws_linux_2_latest" {
+  most_recent = true
+  owners = ["amazon"]
+  filter {
+    name = "name"
+    values = ["amzn2-ami-hvm-*"]
+  }
+}
+
+data "aws_ami_ids" "aws_linux_2_latest_ids" {
+  owners = ["amazon"]
+}
+
 // HTTP SERVER -> SG
 //SECURITY GROUP(SG) 80 TCP, 22 TCP, CIDR ["0.0.0.0/0"]
 
@@ -73,7 +90,7 @@ resource "aws_instance" "http_server" {
   key_name               = "default ec2"
   instance_type          = "t2.micro"
   vpc_security_group_ids = [aws_security_group.http_server_sg.id]
-  subnet_id              = "subnet-0e1c23f099f55178c"
+  subnet_id              = aws_default_subnet.default.id
 
   connection {
     type        = "ssh"
